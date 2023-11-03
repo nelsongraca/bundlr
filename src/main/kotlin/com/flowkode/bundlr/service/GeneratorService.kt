@@ -33,7 +33,7 @@ class GeneratorService {
     @field: Default
     lateinit var projectService: ProjectService
 
-     @Inject
+    @Inject
     @field: Default
     lateinit var downloadService: DownloadService
 
@@ -91,7 +91,7 @@ class GeneratorService {
                         val url = URI(baseUri.scheme, baseUri.userInfo, baseUri.host, baseUri.port, baseUri.path + part.file, baseUri.query, baseUri.fragment).toURL()
                         LOGGER.info("Downloading {}", url)
                         try {
-                            downloadService.download(url,out)
+                            downloadService.download(url, out)
                         } catch (_: FileNotFoundException) {
                             LOGGER.warn("Part not found {}", part)
                         } catch (e: Exception) {
@@ -123,7 +123,7 @@ class GeneratorService {
             return emptySet()
 
         foundParts.add(part)
-        val parts = part.dependencies.mapTo(HashSet()) { d -> BomPart(d.part.name, d.amount, d.part.optional, d.part.links) }
+        val parts = part.dependencies.mapTo(HashSet()) { d -> BomPart(getPartName(d.part), d.amount, d.part.optional, d.part.links) }
         parts.addAll(part.dependencies.map { p ->
             getAllBomPartsRecursively(p.part, foundParts)
         }.flatten())
@@ -145,7 +145,7 @@ class GeneratorService {
                 val allParts: MutableList<BomPart>
 
                 if (rootPart != null) {
-                    allParts = mutableListOf(BomPart(rootPart.name))
+                    allParts = mutableListOf(BomPart(getPartName(rootPart)))
                     allParts.addAll(getAllBomPartsRecursively(rootPart))
                 } else {
                     allParts = mutableListOf()
@@ -155,6 +155,14 @@ class GeneratorService {
             }.flatten().filterNotNull()
 
             BOM(parts)
+        }
+    }
+
+    private fun getPartName(part: Part): String {
+        return if (part.file != null) {
+            Path(part.file).fileName.name
+        } else {
+            part.name
         }
     }
 }
