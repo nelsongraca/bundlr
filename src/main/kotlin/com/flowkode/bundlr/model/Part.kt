@@ -2,6 +2,8 @@ package com.flowkode.bundlr.model
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo
 import com.fasterxml.jackson.annotation.JsonIdentityReference
+import com.fasterxml.jackson.annotation.JsonSetter
+import com.fasterxml.jackson.annotation.Nulls
 import com.fasterxml.jackson.annotation.ObjectIdGenerators
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class,property = "id")
@@ -10,8 +12,8 @@ data class Part(
     val name: String,
     val file: String? = null,
     val optional: Boolean = false,
+    @JsonSetter(nulls = Nulls.SKIP)
     val dependencies: List<Dependency> = emptyList()
-
 ) {
 
     override fun toString(): String {
