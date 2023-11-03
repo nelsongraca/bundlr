@@ -1,5 +1,6 @@
 package com.flowkode.bundlr.service
 
+import com.flowkode.bundlr.model.Part
 import com.flowkode.bundlr.model.form.FormComponent
 import com.flowkode.bundlr.model.form.FormComponentRequest
 import com.flowkode.bundlr.model.form.FormOption
@@ -8,12 +9,11 @@ import io.smallrye.mutiny.Uni
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.enterprise.inject.Default
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.merge
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
-import java.io.PipedInputStream
-import java.io.PipedOutputStream
 import java.net.URI
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -54,24 +54,34 @@ class GeneratorService {
     }
 
     fun generateZipBundle(projectCode: String, data: List<FormComponentRequest>): Uni<InputStream> {
+        LOGGER.info("Bundling {} with components {}", projectCode, data.toString())
+
         return projectService.getProject(projectCode).onItem().transform { a ->
             val outStream = ByteArrayOutputStream()
 
             val baseUri = URI.create(a.config.baseUrl)
 
-
             ZipOutputStream(outStream).use { out ->
                 val parts = data.map { datum ->
-                    a.components
+                    val part = a.components
                         .find { component -> component.id == datum.id }
                         ?.parts
                         ?.find { part -> part.id == datum.value }
-                }.filterNotNull()
+
+                    val ret = mutableListOf(part)
+                    if (part != null) {
+                        ret.addAll(recurseIntoPart(part))
+                    }
+                    ret
+                }.flatten().filterNotNull()
+
+                LOGGER.debug("Computed parts: {}", parts.joinToString(separator = ", ") { p -> p.id })
+
                 for (part in parts) {
-                    LOGGER.debug("Adding {} to zip", part)
+                    LOGGER.info("Adding {} to zip", part)
                     out.putNextEntry(ZipEntry(Path(part.file!!).fileName.name))
                     val url = URI(baseUri.scheme, baseUri.userInfo, baseUri.host, baseUri.port, baseUri.path + part.file, baseUri.query, baseUri.fragment).toURL()
-                    LOGGER.debug("Downloading {}", url)
+                    LOGGER.info("Downloading {}", url)
                     url.openStream().use { downloadedFile ->
                         downloadedFile.copyTo(out)
                     }
@@ -80,5 +90,17 @@ class GeneratorService {
             }
             ByteArrayInputStream(outStream.toByteArray())
         }
+    }
+
+    private fun recurseIntoPart(part: Part, foundParts: MutableSet<Part> = mutableSetOf()): Set<Part> {
+        if (foundParts.contains(part))
+            return emptySet()
+
+        foundParts.add(part)
+        val parts = part.dependencies.mapTo(HashSet()) { d -> d.part }
+        parts.addAll(parts.map { p ->
+            recurseIntoPart(p,foundParts)
+        }.flatten())
+        return parts
     }
 }

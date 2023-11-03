@@ -21,7 +21,7 @@ class ProjectService {
         val lidLong = Part(
             id = "long",
             name = "Long",
-            file = "/Panels/Lid/Long/Blank/Lid%20-%20Long%20Blank.stl"
+            file = "Panels/Lid/Long/Blank/Lid - Long Blank.stl"
         )
         val mcuPico = Part(
             id = "mcu_skr_pico",
@@ -57,13 +57,13 @@ class ProjectService {
             id = "fan_gasket_50",
             name = "50mm Fan Gasket",
             file = "/Fans/50x12/5012 TPU Gasket.stl",
-            optional = true
-        )
+            optional = true,
 
+        )
         val sidePanelFan5012 = Part(
             id = "side_panel_fan5012",
             name = "50x12mm Fan",
-            file = "Panels/Side Panel/50mm Fan/Side Panel - External 50mm Fan.stl",
+            file = "/Panels/Side Panel/50mm Fan/Side Panel - External 50mm Fan.stl",
             dependencies = listOf(
                 Dependency(fanCage5012),
                 Dependency(fanGasket50)

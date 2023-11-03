@@ -17,4 +17,8 @@ data class FormComponentRequest(
     override fun hashCode(): Int {
         return id.hashCode()
     }
+
+    override fun toString(): String {
+        return "FormComponentRequest(id='$id', value='$value')"
+    }
 }
