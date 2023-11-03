@@ -9,7 +9,6 @@ import io.smallrye.mutiny.Uni
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.enterprise.inject.Default
 import jakarta.inject.Inject
-import kotlinx.coroutines.flow.merge
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -74,23 +73,29 @@ class GeneratorService {
                         ret.addAll(recurseIntoPart(part))
                     }
                     ret
-                }.flatten().filterNotNull()
+                }.flatten().filterNotNull().filter { p -> p.file != null }
 
                 LOGGER.debug("Computed parts: {}", parts.joinToString(separator = ", ") { p -> p.id })
 
                 for (part in parts) {
-                    LOGGER.info("Adding {} to zip", part)
-                    out.putNextEntry(ZipEntry(Path(part.file!!).fileName.name))
-                    val url = URI(baseUri.scheme, baseUri.userInfo, baseUri.host, baseUri.port, baseUri.path + part.file, baseUri.query, baseUri.fragment).toURL()
-                    LOGGER.info("Downloading {}", url)
-                    try {
-                        url.openStream().use { downloadedFile ->
-                            downloadedFile.copyTo(out)
+                    if (part.file != null) {
+                        LOGGER.info("Adding {} to zip", part)
+
+                        out.putNextEntry(ZipEntry(Path(part.file).fileName.name))
+                        val url = URI(baseUri.scheme, baseUri.userInfo, baseUri.host, baseUri.port, baseUri.path + part.file, baseUri.query, baseUri.fragment).toURL()
+                        LOGGER.info("Downloading {}", url)
+                        try {
+                            url.openStream().use { downloadedFile ->
+                                downloadedFile.copyTo(out)
+                            }
+                        } catch (_: FileNotFoundException) {
+                            LOGGER.warn("Part not found {}", part)
+                        } catch (e: Exception) {
+                            LOGGER.warn("Could not download part {}", part, e)
                         }
-                    } catch (_: FileNotFoundException) {
-                        LOGGER.warn("Part not found {}", part)
-                    } catch (e: Exception) {
-                        LOGGER.warn("Could not download part {}", part, e)
+                    }
+                    else {
+                        LOGGER.info("Skipping add {} to zip because file is null.", part)
                     }
                 }
             }

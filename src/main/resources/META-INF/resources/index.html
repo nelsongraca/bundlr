@@ -5,7 +5,7 @@
     <title>bundlr - 1.0.0-SNAPSHOT</title>
     <script type="text/javascript">
 
-        fetch('/generator/forminfo/a')
+        fetch('/generator/forminfo/test')
             .then(value => value.json())
             .then(jsonData => {
                 var formfield = document.getElementById('dataForm');
@@ -36,7 +36,7 @@
     </script>
 </head>
 <body>
-<form id="dataForm" method="POST" action="/generator/bundle/a">
+<form id="dataForm" method="POST" action="/generator/bundle/test">
 
     <input type="submit">
 </form>

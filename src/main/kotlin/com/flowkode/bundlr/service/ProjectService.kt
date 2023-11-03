@@ -24,6 +24,9 @@ class ProjectService {
             throw ProjectNotFoundException("Project $projectCode does not exist")
         }
 
+        if (project.config().startsWith("/"))
+            return Uni.createFrom().item(objectMapper.readValue(ProjectService::class.java.getResource(project.config()), Project::class.java))
+
         return Uni.createFrom().item(objectMapper.readValue(URL(project.config()), Project::class.java))
     }
 }
