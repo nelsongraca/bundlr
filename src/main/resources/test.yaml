@@ -15,6 +15,8 @@ parts:
     - &m3x10
         id: "m3x10"
         name: "SHCS M3 10mm"
+        links:
+            - https://aliexpress.com/item/4000142028043.html
     - &short
         id: "short"
         name: "Short"

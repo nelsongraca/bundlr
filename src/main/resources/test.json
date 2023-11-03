@@ -6,7 +6,10 @@
   "parts": [
     {
       "id": "m3x10",
-      "name": "SHCS M3 10mm"
+      "name": "SHCS M3 10mm",
+      "links": [
+        "https://aliexpress.com/item/4000142028043.html"
+      ]
     },
     {
       "id": "short",

@@ -26,4 +26,9 @@ data class Component(
     override fun hashCode(): Int {
         return id.hashCode()
     }
+
+    override fun toString(): String {
+        return "Component(id='$id', name='$name', parts=$parts)"
+    }
+
 }

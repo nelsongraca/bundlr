@@ -121,7 +121,7 @@ class GeneratorService {
             return emptySet()
 
         foundParts.add(part)
-        val parts = part.dependencies.mapTo(HashSet()) { d -> BomPart(d.part.name, d.amount, d.part.optional) }
+        val parts = part.dependencies.mapTo(HashSet()) { d -> BomPart(d.part.name, d.amount, d.part.optional, d.part.links) }
         parts.addAll(part.dependencies.map { p ->
             getAllBomPartsRecursively(p.part, foundParts)
         }.flatten())
@@ -143,7 +143,7 @@ class GeneratorService {
                 val allParts: MutableList<BomPart>
 
                 if (rootPart != null) {
-                    allParts = mutableListOf(BomPart(rootPart.name, 1, false))
+                    allParts = mutableListOf(BomPart(rootPart.name))
                     allParts.addAll(getAllBomPartsRecursively(rootPart))
                 } else {
                     allParts = mutableListOf()
