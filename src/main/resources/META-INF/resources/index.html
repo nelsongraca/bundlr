@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>bundlr - 1.0.0-SNAPSHOT</title>
+    <script type="text/javascript">
+
+        fetch('/generator/forminfo/a')
+            .then(value => value.json())
+            .then(jsonData => {
+                var formfield = document.getElementById('dataForm');
+                console.log(jsonData);
+                for (component of jsonData.components.slice().reverse()) {
+                    console.log(component);
+
+                    var selectList = document.createElement("select");
+                    selectList.name = component.id;
+                    formfield.prepend(selectList);
+
+                    var titleOption = document.createElement("option");
+                    titleOption.text = component.name;
+                    titleOption.disabled="disabled";
+                    titleOption.selected="selected";
+                    selectList.appendChild(titleOption);
+
+                    for (opt of  component.options) {
+                        var option = document.createElement("option");
+                        option.value = opt.id;
+                        option.text = opt.value;
+                        selectList.appendChild(option);
+                    }
+                }
+            });
+
+
+    </script>
+</head>
+<body>
+<form id="dataForm" method="POST" action="/generator/bundle/a">
+
+    <input type="submit">
+</form>
+</body>
+</html>
