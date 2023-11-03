@@ -5,10 +5,22 @@
     <title>bundlr - 1.0.0-SNAPSHOT</title>
     <script type="text/javascript">
 
-        fetch('/generator/forminfo/test')
+        function generateZipBundle() {
+            const formfield = document.getElementById('dataForm');
+            formfield.action = "/generate/bundle/test";
+            formfield.submit();
+        }
+
+        function generateBOM() {
+            const formfield = document.getElementById('dataForm');
+            formfield.action = "/generate/bom/test";
+            formfield.submit();
+        }
+
+        fetch('/generate/forminfo/test')
             .then(value => value.json())
             .then(jsonData => {
-                var formfield = document.getElementById('dataForm');
+                const formfield = document.getElementById('dataForm');
                 console.log(jsonData);
                 for (component of jsonData.components.slice().reverse()) {
                     console.log(component);
@@ -19,11 +31,11 @@
 
                     var titleOption = document.createElement("option");
                     titleOption.text = component.name;
-                    titleOption.disabled="disabled";
-                    titleOption.selected="selected";
+                    titleOption.disabled = true;
+                    titleOption.selected = true;
                     selectList.appendChild(titleOption);
 
-                    for (opt of  component.options) {
+                    for (opt of component.options) {
                         var option = document.createElement("option");
                         option.value = opt.id;
                         option.text = opt.value;
@@ -31,14 +43,13 @@
                     }
                 }
             });
-
-
     </script>
 </head>
 <body>
-<form id="dataForm" method="POST" action="/generator/bundle/test">
+<form id="dataForm" method="POST" action="/generate/bom/test">
 
-    <input type="submit">
+    <input type="button" onclick="generateZipBundle()" value="Generate ZIP Bundle"/>
+    <input type="button" onclick="generateBOM()" value="Generate BOM"/>
 </form>
 </body>
 </html>

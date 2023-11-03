@@ -1,5 +1,6 @@
 package com.flowkode.bundlr.api
 
+import com.flowkode.bundlr.model.bom.BOM
 import com.flowkode.bundlr.model.form.FormComponentRequest
 import com.flowkode.bundlr.model.form.ProjectForm
 import com.flowkode.bundlr.service.GeneratorService
@@ -13,7 +14,7 @@ import jakarta.ws.rs.core.Response
 import java.util.stream.Collectors
 
 
-@Path("/generator")
+@Path("/generate")
 class GeneratorResource {
 
     @Inject
@@ -41,5 +42,15 @@ class GeneratorResource {
                     .header("Content-Type", "application/zip")
                     .build()
             }
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Path("/bom/{projectCode}")
+    fun bom(@PathParam("projectCode") projectCode: String, formData: MultivaluedMap<String, String>): Uni<BOM> {
+        val data = formData.entries
+            .map { e -> FormComponentRequest(id = e.key, value = e.value[0]) }
+
+        return generatorService.generateBom(projectCode, data)
     }
 }

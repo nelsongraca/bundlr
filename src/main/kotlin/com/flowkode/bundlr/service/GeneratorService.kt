@@ -1,6 +1,8 @@
 package com.flowkode.bundlr.service
 
 import com.flowkode.bundlr.model.Part
+import com.flowkode.bundlr.model.bom.BOM
+import com.flowkode.bundlr.model.bom.BomPart
 import com.flowkode.bundlr.model.form.FormComponent
 import com.flowkode.bundlr.model.form.FormComponentRequest
 import com.flowkode.bundlr.model.form.FormOption
@@ -70,7 +72,7 @@ class GeneratorService {
 
                     val ret = mutableListOf(part)
                     if (part != null) {
-                        ret.addAll(recurseIntoPart(part))
+                        ret.addAll(getAllPartsRecursively(part))
                     }
                     ret
                 }.flatten().filterNotNull().filter { p -> p.file != null }
@@ -93,8 +95,7 @@ class GeneratorService {
                         } catch (e: Exception) {
                             LOGGER.warn("Could not download part {}", part, e)
                         }
-                    }
-                    else {
+                    } else {
                         LOGGER.info("Skipping add {} to zip because file is null.", part)
                     }
                 }
@@ -103,15 +104,55 @@ class GeneratorService {
         }
     }
 
-    private fun recurseIntoPart(part: Part, foundParts: MutableSet<Part> = mutableSetOf()): Set<Part> {
+    private fun getAllPartsRecursively(part: Part, foundParts: MutableSet<Part> = mutableSetOf()): Set<Part> {
         if (foundParts.contains(part))
             return emptySet()
 
         foundParts.add(part)
         val parts = part.dependencies.mapTo(HashSet()) { d -> d.part }
         parts.addAll(parts.map { p ->
-            recurseIntoPart(p, foundParts)
+            getAllPartsRecursively(p, foundParts)
         }.flatten())
         return parts
+    }
+
+    private fun getAllBomPartsRecursively(part: Part, foundParts: MutableSet<Part> = mutableSetOf()): Set<BomPart> {
+        if (foundParts.contains(part))
+            return emptySet()
+
+        foundParts.add(part)
+        val parts = part.dependencies.mapTo(HashSet()) { d -> BomPart(d.part.name, d.amount, d.part.optional) }
+        parts.addAll(part.dependencies.map { p ->
+            getAllBomPartsRecursively(p.part, foundParts)
+        }.flatten())
+        return parts
+    }
+
+    fun generateBom(projectCode: String, data: List<FormComponentRequest>): Uni<BOM> {
+        LOGGER.info("Generating BOM {} with components {}", projectCode, data.toString())
+
+        return projectService.getProject(projectCode).onItem().transform { a ->
+
+            val parts = data.map { datum ->
+                val component = a.components
+                    .find { component -> component.id == datum.id }
+                val rootPart = component
+                    ?.parts
+                    ?.find { part -> part.id == datum.value }
+
+                val allParts: MutableList<BomPart>
+
+                if (rootPart != null) {
+                    allParts = mutableListOf(BomPart(rootPart.name, 1, false))
+                    allParts.addAll(getAllBomPartsRecursively(rootPart))
+                } else {
+                    allParts = mutableListOf()
+                }
+                allParts
+
+            }.flatten().filterNotNull()
+
+            BOM(parts)
+        }
     }
 }
