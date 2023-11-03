@@ -33,6 +33,10 @@ class GeneratorService {
     @field: Default
     lateinit var projectService: ProjectService
 
+     @Inject
+    @field: Default
+    lateinit var downloadService: DownloadService
+
     fun generateForm(projectCode: String): Uni<ProjectForm> {
         return projectService.getProject(projectCode).onItem().transform { a ->
             val formComponents = mutableListOf<FormComponent>()
@@ -87,9 +91,7 @@ class GeneratorService {
                         val url = URI(baseUri.scheme, baseUri.userInfo, baseUri.host, baseUri.port, baseUri.path + part.file, baseUri.query, baseUri.fragment).toURL()
                         LOGGER.info("Downloading {}", url)
                         try {
-                            url.openStream().use { downloadedFile ->
-                                downloadedFile.copyTo(out)
-                            }
+                            downloadService.download(url,out)
                         } catch (_: FileNotFoundException) {
                             LOGGER.warn("Part not found {}", part)
                         } catch (e: Exception) {
