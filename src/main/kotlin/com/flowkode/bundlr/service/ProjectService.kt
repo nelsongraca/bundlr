@@ -2,6 +2,7 @@ package com.flowkode.bundlr.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.flowkode.bundlr.config.CoreConfig
+import com.flowkode.bundlr.config.YamlMapper
 import com.flowkode.bundlr.error.ProjectNotFoundException
 import com.flowkode.bundlr.model.Project
 import io.smallrye.mutiny.Uni
@@ -17,6 +18,11 @@ class ProjectService {
 
     @Inject
     lateinit var objectMapper: ObjectMapper
+
+    @Inject
+    @YamlMapper
+    lateinit var yamlMapper: ObjectMapper
+
     fun getProject(projectCode: String): Uni<Project> {
         val project = coreConfig.allowedProjects().find { ap -> ap.name() == projectCode }
 
@@ -24,9 +30,18 @@ class ProjectService {
             throw ProjectNotFoundException("Project $projectCode does not exist")
         }
 
-        if (project.config().startsWith("/"))
-            return Uni.createFrom().item(objectMapper.readValue(ProjectService::class.java.getResource(project.config()), Project::class.java))
+        val resource = if (project.config().startsWith("/")) {
+            ProjectService::class.java.getResource(project.config())!!
+        } else {
+            URL(project.config())
+        }
 
-        return Uni.createFrom().item(objectMapper.readValue(URL(project.config()), Project::class.java))
+        return if (project.config().endsWith(".json")) {
+            Uni.createFrom().item(objectMapper.readValue(resource, Project::class.java))
+        } else if (project.config().endsWith(".yml") || project.config().endsWith(".yaml")) {
+            Uni.createFrom().item(yamlMapper.readValue(resource, Project::class.java))
+        } else {
+            throw ProjectNotFoundException()
+        }
     }
 }

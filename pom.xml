@@ -73,6 +73,10 @@
       <version>2.15.2</version>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+    </dependency>
+    <dependency>
       <groupId>io.rest-assured</groupId>
       <artifactId>kotlin-extensions</artifactId>
       <scope>test</scope>

@@ -1,0 +1,73 @@
+---
+config:
+    id: "test"
+    baseUrl: "https://raw.githubusercontent.com/jon-harper/OmniBox/main"
+parts:
+    - &fan_gasket_50
+        id: "fan_gasket_50"
+        name: "50mm Fan Gasket"
+        file: "/Fans/50x12/5012 TPU Gasket.stl"
+        optional: true
+    - &fan_cage_5012
+        id: "fan_cage_5012"
+        name: "50x12mm Fan Cage"
+        file: "/Fans/50x12/5012 Fan Cage.stl"
+    - &m3x10
+        id: "m3x10"
+        name: "SHCS M3 10mm"
+    - &short
+        id: "short"
+        name: "Short"
+        file: "/Panels/Lid/Short/Blank/Lid - Short Blank.stl"
+    - &side_panel_blank
+        id: "side_panel_blank"
+        name: "Blank"
+        file: "/Panels/Side Panel/Blank/Side Panel - Blank.stl"
+        dependencies:
+            - part: *m3x10
+              amount: 6
+    - &side_panel_fan5012
+        id: "side_panel_fan5012"
+        name: "50x12mm Fan"
+        file: "/Panels/Side Panel/50mm Fan/Side Panel - External 50mm Fan.stl1"
+        dependencies:
+            - part: *fan_cage_5012
+            - part: *fan_gasket_50
+    - &mcu_btt_octopus
+        id: "mcu_btt_octopus"
+        name: "BTT Octopus"
+        file: "/Trays/MCU/BTT Octopus/MCU Tray - BTT Octopus - v2.stl"
+        optional: false
+        dependencies:
+            - part: *m3x10
+              amount: 6
+    - &long
+        id: "long"
+        name: "Long"
+        file: "Panels/Lid/Long/Blank/Lid - Long Blank.stl"
+        optional: false
+        dependencies: []
+    - &mcu_skr_pico
+        id: "mcu_skr_pico"
+        name: "SKR Pico"
+        file: "/Trays/MCU/BTT SKR Pico/MCU Tray - BTT SKR Pico - v2 HSI.stl"
+        optional: false
+        dependencies:
+            - part: *m3x10
+              amount: 4
+components:
+    - id: "lid"
+      name: "Lid"
+      parts:
+          - *short
+          - *long
+    - id: "mcu_tray"
+      name: "MCU Tray"
+      parts:
+          - *mcu_btt_octopus
+          - *mcu_skr_pico
+    - id: "side_panel_1"
+      name: "Side Panel 1"
+      parts:
+          - *side_panel_blank
+          - *side_panel_fan5012

@@ -23,14 +23,14 @@ class GeneratorResource {
     @GET
     @Path("/forminfo/{projectCode}")
     @Produces(MediaType.APPLICATION_JSON)
-    fun test(@PathParam("projectCode") projectCode: String): Uni<ProjectForm> {
+    fun formInfo(@PathParam("projectCode") projectCode: String): Uni<ProjectForm> {
         return generatorService.generateForm(projectCode)
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Path("/bundle/{projectCode}")
-    fun generateFile(@PathParam("projectCode") projectCode: String, formData: MultivaluedMap<String, String>): Uni<Response> {
+    fun bundle(@PathParam("projectCode") projectCode: String, formData: MultivaluedMap<String, String>): Uni<Response> {
         val data = formData.entries
             .map { e -> FormComponentRequest(id = e.key, value = e.value[0]) }
 
