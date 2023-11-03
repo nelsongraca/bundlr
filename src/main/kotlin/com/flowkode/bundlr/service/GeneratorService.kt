@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.merge
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.io.FileNotFoundException
 import java.io.InputStream
 import java.net.URI
 import java.util.zip.ZipEntry
@@ -82,11 +83,16 @@ class GeneratorService {
                     out.putNextEntry(ZipEntry(Path(part.file!!).fileName.name))
                     val url = URI(baseUri.scheme, baseUri.userInfo, baseUri.host, baseUri.port, baseUri.path + part.file, baseUri.query, baseUri.fragment).toURL()
                     LOGGER.info("Downloading {}", url)
-                    url.openStream().use { downloadedFile ->
-                        downloadedFile.copyTo(out)
+                    try {
+                        url.openStream().use { downloadedFile ->
+                            downloadedFile.copyTo(out)
+                        }
+                    } catch (_: FileNotFoundException) {
+                        LOGGER.warn("Part not found {}", part)
+                    } catch (e: Exception) {
+                        LOGGER.warn("Could not download part {}", part, e)
                     }
                 }
-
             }
             ByteArrayInputStream(outStream.toByteArray())
         }
@@ -99,7 +105,7 @@ class GeneratorService {
         foundParts.add(part)
         val parts = part.dependencies.mapTo(HashSet()) { d -> d.part }
         parts.addAll(parts.map { p ->
-            recurseIntoPart(p,foundParts)
+            recurseIntoPart(p, foundParts)
         }.flatten())
         return parts
     }

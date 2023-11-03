@@ -63,7 +63,7 @@ class ProjectService {
         val sidePanelFan5012 = Part(
             id = "side_panel_fan5012",
             name = "50x12mm Fan",
-            file = "/Panels/Side Panel/50mm Fan/Side Panel - External 50mm Fan.stl",
+            file = "/Panels/Side Panel/50mm Fan/Side Panel - External 50mm Fan.stl1",
             dependencies = listOf(
                 Dependency(fanCage5012),
                 Dependency(fanGasket50)
