@@ -91,7 +91,7 @@ class GeneratorService {
                         val url = URI(baseUri.scheme, baseUri.userInfo, baseUri.host, baseUri.port, baseUri.path + part.file, baseUri.query, baseUri.fragment).toURL()
                         LOGGER.info("Downloading {}", url)
                         try {
-                            downloadService.download(url, out)
+                            downloadService.download(url).onItem().invoke { b -> out.write(b) }
                         } catch (_: FileNotFoundException) {
                             LOGGER.warn("Part not found {}", part)
                         } catch (e: Exception) {

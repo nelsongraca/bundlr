@@ -48,6 +48,6 @@ class ProjectService {
         } else {
             throw ProjectNotFoundException()
         }
-        return Uni.createFrom().item(mapper.readValue(downloadService.download(url), Project::class.java))
+        return downloadService.download(url).onItem().transform { b -> mapper.readValue(b, Project::class.java) }
     }
 }
