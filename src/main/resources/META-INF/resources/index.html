@@ -3,53 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>bundlr - 1.0.0-SNAPSHOT</title>
-    <script type="text/javascript">
-
-        function generateZipBundle() {
-            const formfield = document.getElementById('dataForm');
-            formfield.action = "/generate/bundle/test";
-            formfield.submit();
-        }
-
-        function generateBOM() {
-            const formfield = document.getElementById('dataForm');
-            formfield.action = "/generate/bom/test";
-            formfield.submit();
-        }
-
-        fetch('/generate/forminfo/test')
-            .then(value => value.json())
-            .then(jsonData => {
-                const formfield = document.getElementById('dataForm');
-                console.log(jsonData);
-                for (component of jsonData.components.slice().reverse()) {
-                    console.log(component);
-
-                    var selectList = document.createElement("select");
-                    selectList.name = component.id;
-                    formfield.prepend(selectList);
-
-                    var titleOption = document.createElement("option");
-                    titleOption.text = component.name;
-                    titleOption.disabled = true;
-                    titleOption.selected = true;
-                    selectList.appendChild(titleOption);
-
-                    for (opt of component.options) {
-                        var option = document.createElement("option");
-                        option.value = opt.id;
-                        option.text = opt.value;
-                        selectList.appendChild(option);
-                    }
-                }
-            });
+    <script src="bundlr.js" type="text/javascript">
     </script>
 </head>
 <body>
-<form id="dataForm" method="POST" action="/generate/bom/test">
-
-    <input type="button" onclick="generateZipBundle()" value="Generate ZIP Bundle"/>
-    <input type="button" onclick="generateBOM()" value="Generate BOM"/>
+<form id="dataForm" method="POST">
+    <input id="bundle-button" type="button" value="Generate ZIP Bundle"/>
+    <input id="bom-button" type="button" value="Generate BOM"/>
 </form>
+<script>
+    new Bundlr("dataForm", "test", "bundle-button", "bom-button").init()
+</script>
 </body>
 </html>
