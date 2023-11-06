@@ -5,14 +5,40 @@
     <title>bundlr - 1.0.0-SNAPSHOT</title>
     <script src="bundlr.js" type="text/javascript">
     </script>
+    <script>
+        const bundlr = new Bundlr(
+            "test",
+            "dataForm",
+            "itemParentTemplate",
+            "itemTemplate",
+            "bomHeaderTemplate",
+            "bomLineTemplate"
+        );
+        document.addEventListener('DOMContentLoaded', ev => {
+            bundlr.init()
+        });
+    </script>
 </head>
 <body>
+<template id="itemParentTemplate">
+    <select name="{component_id}">
+        {items}
+    </select>
+</template>
+<template id="itemTemplate">
+    <option value="{part_id}">{part_name}</option>
+</template>
+<template id="bomHeaderTemplate">
+
+</template>
+<template id="bomLineTemplate">
+
+</template>
+
 <form id="dataForm" method="POST">
-    <input id="bundle-button" type="button" value="Generate ZIP Bundle"/>
-    <input id="bom-button" type="button" value="Generate BOM"/>
+    {select}
+    <input id="bundle-button" type="button" value="Generate ZIP Bundle" onclick="bundlr.generateZipBundle()"/>
+    <input id="bom-button" type="button" value="Generate BOM" onclick="bundlr.generateBOM()"/>
 </form>
-<script>
-    new Bundlr("dataForm", "test", "bundle-button", "bom-button").init()
-</script>
 </body>
 </html>
