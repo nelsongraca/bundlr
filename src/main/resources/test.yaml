@@ -1,75 +1,198 @@
----
 config:
-    id: "test"
-    baseUrl: "https://raw.githubusercontent.com/jon-harper/OmniBox/main"
+    id: test
+    baseUrl: https://raw.githubusercontent.com/jon-harper/E34M1/main
+suppliers:
+    3do:
+        name: 3DO
+        region: EU (DK)
+        ships: EU
+    aliexpress:
+        name: AliExpress
+        region: Worldwide
+        ships: Worlwide
+    amazon_us:
+        name: Amazon.com (USA)
+        region: US
+        ships: US
+    bolt_depot:
+        name: Bolt Depot
+        region: US
+        ships: US
+    digikey:
+        name: Digikey
+        region: Worldwide
+        ships: Worldwide
+    fabreeko:
+        name: Fabreeko
+        region: US
+        ships: Worldwide
+    stepperonline:
+        name: StepperOnline
+        region: Worldwide
+        ships: Worldwide
+    3djake:
+        name: 3DJake
+        region: EU (AT)
+        ships: Worldwide
+    kb3d:
+        name: KB-3D
+        region: US
+        ships: Worldwide
+    west3d:
+        name: West3D
+        region: US
+        ships: Worldwide
+    biqu:
+        name: Biqu/Bigtreetech
+        region: CN, US, EU, CA
+        ships: Worldwide
+    tinymachines:
+        name: Tiny Machines
+        region: US
+        ships: US
+    filastruder:
+        name: Filastruder
+        region: US
+        ships: US
+    e3d:
+        name: E3D Online Store
+        region: UK
+        ships: Worldwide
+    beacon3d:
+        name: Beacon3D Store
+        region: US
+        ships: Worldwide
+authors:
+    u_cuiviemen:
+        name: cuiviemen
+        url: https://www.printables.com/@cuiviemen_127292
+    u_psychohead:
+        name: Psych0h3ad
+        url: https://www.printables.com/@Psych0h3ad_168275
+    u_flow4enol:
+        name: flow4enol
+        url: https://www.printables.com/@Flow4Enol_518511
+    u_3dpandme:
+        name: 3DP and Me
+        url: https://www.printables.com/@3DPandMe
+    u_eva:
+        name: EVA
+        url: https://main.eva-3d.page/
+    u_etotheipi:
+        name: etotheipi
+        url: "https://www.printables.com/@etotheipi"
+    u_themacboy:
+        name: themacboy
+        url: "https://www.printables.com/@themacboy_276431"
+    u_jonspaceharper:
+        name: jonspaceharper
+        url: "https://www.github.com/jon-harper/"
+    u_svennixx:
+        name: Svennixx
+        url: "https://github.com/Svennixx"
 parts:
-    - &fan_gasket_50
-        id: "fan_gasket_50"
-        name: "50mm Fan Gasket"
-        file: "/Fans/50x12/5012 TPU Gasket.stl"
-        optional: true
-    - &fan_cage_5012
-        id: "fan_cage_5012"
-        name: "50x12mm Fan Cage"
-        file: "/Fans/50x12/5012 Fan Cage.stl"
-    - &m3x10
-        id: "m3x10"
-        name: "SHCS M3 10mm"
-        links:
-            - https://aliexpress.com/item/4000142028043.html
-    - &short
-        id: "short"
-        name: "Short"
-        file: "/Panels/Lid/Short/Blank/Lid - Short Blank.stl"
-    - &side_panel_blank
-        id: "side_panel_blank"
-        name: "Blank"
-        file: "/Panels/Side Panel/Blank/Side Panel - Blank.stl"
-        dependencies:
-            - part: *m3x10
-              amount: 6
-    - &side_panel_fan5012
-        id: "side_panel_fan5012"
-        name: "50x12mm Fan"
-        file: "/Panels/Side Panel/50mm Fan/Side Panel - External 50mm Fan.stl1"
-        dependencies:
-            - part: *fan_cage_5012
-            - part: *fan_gasket_50
-    - &mcu_btt_octopus
-        id: "mcu_btt_octopus"
-        name: "BTT Octopus"
-        file: "/Trays/MCU/BTT Octopus/MCU Tray - BTT Octopus - v2.stl"
-        optional: false
-        dependencies:
-            - part: *m3x10
-              amount: 6
-    - &long
-        id: "long"
-        name: "Long"
-        file: "Panels/Lid/Long/Blank/Lid - Long Blank.stl"
-        optional: false
-        dependencies: []
-    - &mcu_skr_pico
-        id: "mcu_skr_pico"
-        name: "SKR Pico"
-        file: "/Trays/MCU/BTT SKR Pico/MCU Tray - BTT SKR Pico - v2 HSI.stl"
-        optional: false
-        dependencies:
-            - part: *m3x10
-              amount: 4
+    ### Socket head cap screws
+    DIN 912:
+        # M2.5 SHCS
+        shcs_m2.5_6:
+            name: M2.5 x 6mm SHCS
+            sources:
+                bolt_depot:
+                    url: "https://www.boltdepot.com/Product-Details.aspx?product=6370"
+        shcs_m2.5_8:
+            name: M2.5 x 8mm SHCS
+            sources:
+                bolt_depot:
+                    url: "https://www.boltdepot.com/Product-Details.aspx?product=6371"
+
+        # M3 SHCS
+        shcs_m3_6:
+            name: M3 x 6mm SHCS
+            sources:
+                bolt_depot:
+                    url: "https://www.boltdepot.com/Product-Details.aspx?product=22481"
+                amazon_us:
+                    url: "https://www.amazon.com/Fullerkreg-Socket-Stainless-Machine-Quantity/dp/B07CJ7PDYT"
+        shcs_m3_12:
+            name: M3 x 12mm SHCS
+            sources:
+                bolt_depot:
+                    url: "https://www.boltdepot.com/Product-Details.aspx?product=22484"
+
+    Other Fasteners:
+        hsi_m3_5od_4l:
+            name: M3 x 5mm OD x 4mm L Insert
+            img: img/parts/hsi_m3_5od_4l.webp
+            sources:
+                amazon_us:
+                    url: "https://www.amazon.com/uxcell-Knurled-Insert-Female-Embedding/dp/B09MCWTBCC"
+                    note: 120pk
+                fabreeko:
+                    url: "https://www.fabreeko.com/products/cnc-kitchen-heat-inserts-m2-m8?_pos=1&_sid=09bf25e0f&_ss=r&variant=44311958061311"
+                    note: 100pk
+                kb3d:
+                    url: "https://kb-3d.com/store/inserts-fasteners-adhesives/278-brass-heat-set-threaded-insert-for-plastic-m3x5x4mm.html"
+                    note: Sold as eaches.
+
+    ###
+    Fan:
+        ###
+        fan_4010:
+            name: 40mm x 10mm Axial Fan
+            img: img/parts/fan_4010.webp
+            sources:
+                amazon_us:
+                    url: "https://www.amazon.com/GDSTIME-Bearing-40x40x10mm-Brushless-Cooling/dp/B0B1V52WGP"
+                    note: 2ea, GDSTIME Brushless 24V
+                kb3d:
+                    url: "https://kb-3d.com/store/fans/455-sunon-4010-fan-24v-maglev-1642214237163.html"
+                    note: Sunon Maglev 24V. Does not support PWM.
+                3do:
+                    url: "https://3do.eu/fans/191-gdstime-4010-24v-axial-fan-298dba-7500rpm.html"
+                    note: GDSTIME Brushless 24V
+
+    ###
+    Hotends:
+        ###
+        3dpassion_nova:
+            name: 3D Passion Nova
+            img: img/parts/passion.webp
+
+    ###
+    Printed:
+        ###
+        hotend_nova:
+            name: hotend_nova.stl
+            file: /STL/hotend/hotend_nova.stl
+
+subassemblies:
+    assy_hotend_fan:
+        fan_4010: 1
+        shcs_m3_12: 4
+    assy_hotend_common:
+        hsi_m3_5od_4l: 8
+        shcs_m3_6: 4
 components:
-    - id: "lid"
-      name: "Lid"
-      parts:
-          - *short
-          - *long
-    - id: "mcu_tray"
-      name: "MCU Tray"
-      parts:
-          - *mcu_btt_octopus
-          - *mcu_skr_pico
-    - id: "side_panel_1"
-      name: "Side Panel 1"
-      parts:
-          - *side_panel_blank
-          - *side_panel_fan5012
+    Hotend:
+        comp_3dpassion_nova:
+            name: 3D Passion Nova
+            template: hotend_v1
+            img: img/components/hotend_nova.webp
+            attributes:
+                origin: u_eva
+                hsi: true
+                length: Standard
+                ptfe: 39.65
+            parts:
+                3dpassion_nova: 1
+                assy_hotend_fan: 1
+                assy_hotend_common: 1
+                shcs_m2.5_8: 4
+            variants:
+                Stock:
+                    parts:
+                        hotend_nova: 1
+
+templates:
+    v2:
+        - hotend_v1

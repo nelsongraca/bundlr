@@ -20,13 +20,15 @@ class Bundlr {
     }
 
     generateZipBundle() {
-        this.formElement.action = this.rootUrl + "/generate/bundle/" + this.projectName;
-        this.formElement.submit();
+        const formElement = document.getElementById(this.formId);
+        formElement.action = this.rootUrl + "/generate/bundle/" + this.projectName;
+        formElement.submit();
     }
 
     generateBOM() {
+        const formElement = document.getElementById(this.formId);
         const data = new URLSearchParams();
-        for (const pair of new FormData(this.formElement)) {
+        for (const pair of new FormData(formElement)) {
             data.append(pair[0], pair[1]);
         }
         fetch(this.rootUrl + '/generate/bom/' + this.projectName, {
@@ -40,9 +42,7 @@ class Bundlr {
     }
 
     init() {
-        this.formElement = document.getElementById(this.formId);
-
-        const formElement = this.formElement
+        const formElement = document.getElementById(this.formId);
         fetch(this.rootUrl + '/generate/forminfo/' + this.projectName)
             .then(value => value.json())
             .then(jsonData => {

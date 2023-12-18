@@ -5,6 +5,7 @@ import com.flowkode.bundlr.config.CoreConfig
 import com.flowkode.bundlr.config.YamlMapper
 import com.flowkode.bundlr.error.ProjectNotFoundException
 import com.flowkode.bundlr.model.Project
+import com.flowkode.bundlr.model.bom.BOM
 import io.smallrye.mutiny.Uni
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.enterprise.inject.Default
@@ -28,7 +29,7 @@ class ProjectService {
     @field: Default
     lateinit var downloadService: DownloadService
 
-    fun getProject(projectCode: String): Uni<Project> {
+    fun getProject(projectCode: String): Uni<BOM> {
         val project = coreConfig.allowedProjects().find { ap -> ap.name() == projectCode }
 
         if (project == null) {
@@ -48,6 +49,6 @@ class ProjectService {
         } else {
             throw ProjectNotFoundException()
         }
-        return downloadService.download(url).onItem().transform { b -> mapper.readValue(b, Project::class.java) }
+        return downloadService.download(url).onItem().transform { b -> mapper.readValue(b, BOM::class.java) }
     }
 }

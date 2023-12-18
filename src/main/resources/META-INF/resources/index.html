@@ -28,11 +28,16 @@
 <template id="itemTemplate">
     <option value="{part_id}">{part_name}</option>
 </template>
+<template id="bomBodyTemplate">
+<table>
+    {body}
+</table>
+</template>
 <template id="bomHeaderTemplate">
-
+<th><td>Name</td><td>Qty</td></th>
 </template>
 <template id="bomLineTemplate">
-
+    <th><td>{name}</td><td>{amount}</td></th>
 </template>
 
 <form id="dataForm" method="POST">

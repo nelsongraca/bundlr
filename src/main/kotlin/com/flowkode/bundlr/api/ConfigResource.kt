@@ -3,7 +3,9 @@ package com.flowkode.bundlr.api
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.flowkode.bundlr.config.YamlMapper
 import com.flowkode.bundlr.model.Project
+import com.flowkode.bundlr.model.bom.BOM
 import com.flowkode.bundlr.service.ProjectService
+import io.quarkus.logging.Log
 import io.smallrye.mutiny.Uni
 import jakarta.enterprise.inject.Default
 import jakarta.inject.Inject
@@ -26,8 +28,9 @@ class ConfigResource {
     @GET
     @Path("/{projectCode}")
     @Produces(MediaType.APPLICATION_JSON)
-    fun getConfigForProject(@PathParam("projectCode") projectCode: String): Uni<Project> {
+    fun getConfigForProject(@PathParam("projectCode") projectCode: String): Uni<BOM> {
         return projectService.getProject(projectCode)
+            .onFailure().invoke { failure -> Log.error("FAIL", failure) }
     }
 
     @GET
